@@ -1,0 +1,33 @@
+(optional) user_username_format (no default value)
+ user_username_format specifies how to construct a user's username on the
+ Adobe side by combining constant strings with attribute values.
+ Any names in curly braces are taken as attribute names, and everything including
+ the braces will be replaced on a per-user basis with the values of the attributes.
+ This setting should only be used when you are using federatedID and your
+ federation configuration specifies username-based login.  In all other cases,
+ make sure this is not set or returns an empty value, and the user's username
+ will be taken from the user's email.
+ This example supposes that the department and user_id are concatenated to
+ produce a unique username for each user.
+user_username_format: "{department}_{user_id}"
+
+ Some additional info about LDAP connectors:
+
+ Unlike the CSV connector, the LDAP connector does not have custom specifications
+ for how to construct user first names, last names, or country codes from the
+ values of different attributes.  That's because the LDAP protocol specifies
+ pre-defined aliases for a large number of typical attribute values, so there
+ are already pre-defined attribute names that are used for these fields:
+ - the Adobe first name is set from the LDAP "givenName" attribute
+ - the Adobe last name is set from the LDAP "sn" (surname) attribute
+ - the Adobe country is set from the LDAP "country" attribute
+ If you need to override these values on the Adobe side, you can use the
+ custom extension mechanism (see the docs) to compute and set field values
+ by combining these and any other custom attributes needed.  Seed the
+ User Sync documentation for full details.
+
+ Finally, some LDAP systems use uids to identify groups, and place users in
+ groups via uid rather than name.  The User Sync implementation always reads
+ the uid attribute on all objects if the directory provides one, so it is
+ able to handle directories which function in this way even though the
+ configuration files always specify groups by name.
